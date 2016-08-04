@@ -1,0 +1,35 @@
+{
+    "title": "GW2.NET Connectivity",
+    "description": "Provides common classes and types to make http requests against the Guild Wars 2 api server.",
+    "version": "2.0.0-*",
+    "packOptions": {
+        "licenseUrl": "https://github.com/Ruhrpottpatriot/GW2.NET/blob/master/LICENSE",
+        "requireLicenseAcceptance": true,
+        "repository": {
+            "type": "git",
+            "url": "https://github.com/Ruhrpottpatriot/GW2.NET"
+        },
+        "tags": [
+            "GW2",
+            "GW2.NET",
+            "GW2NET",
+            "Guild Wars",
+            "Guild Wars 2"
+        ]
+    },
+    "copyright": "https://github.com/Ruhrpottpatriot/GW2.NET/blob/master/LICENSE",
+    "projectUrl": "https://github.com/Ruhrpottpatriot/GW2.NET/",
+    "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "Polly": "4.3.0",
+        "StyleCop.Analyzers": "1.0.0"
+    },
+    "frameworks": {
+        "netstandard1.2": {
+            "imports": "portable-net45+win8+wpa81+wp8"
+        }
+    },
+    "buildOptions": {
+        "xmlDoc": true
+    }
+}
