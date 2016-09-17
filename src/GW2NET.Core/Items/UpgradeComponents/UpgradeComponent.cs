@@ -14,10 +14,10 @@ namespace GW2NET.Items
     /// <summary>Provides the base class for upgrade component types.</summary>
     public abstract class UpgradeComponent : Item, IUpgrade
     {
+        private static readonly string[] EmptyBonuses = new string[0];
+
         /// <summary>Backing field for <see cref="InfixUpgrade"/>.</summary>
         private InfixUpgrade infixUpgrade = new InfixUpgrade();
-       
-        private static readonly string[] EmptyBonuses = new string[0];
 
         private ICollection<string> bonuses = EmptyBonuses;
 
@@ -29,6 +29,7 @@ namespace GW2NET.Items
                 Debug.Assert(this.bonuses != null, "this.bonuses != null");
                 return this.bonuses;
             }
+
             set
             {
                 this.bonuses = value ?? EmptyBonuses;

@@ -18,9 +18,9 @@ namespace GW2NET.Items
     /// <summary>Provides the base class for weapon types.</summary>
     public abstract class Weapon : Item, IUpgradable, IUpgrade, ISkinnable
     {
-        private InfixUpgrade infixUpgrade = new InfixUpgrade();
-
         private static readonly InfusionSlot[] EmptyInfusionSlots = new InfusionSlot[0];
+
+        private InfixUpgrade infixUpgrade = new InfixUpgrade();
 
         private ICollection<InfusionSlot> infusionSlots = EmptyInfusionSlots;
 
@@ -64,6 +64,7 @@ namespace GW2NET.Items
                 Debug.Assert(this.infusionSlots != null, "this.infusionSlots != null");
                 return this.infusionSlots;
             }
+
             set
             {
                 this.infusionSlots = value ?? EmptyInfusionSlots;

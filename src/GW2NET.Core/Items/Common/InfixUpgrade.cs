@@ -27,6 +27,7 @@ namespace GW2NET.Items
                 Debug.Assert(this.attributes != null, "this.attributes != null");
                 return this.attributes;
             }
+
             set
             {
                 this.attributes = value ?? EmptyCombatAttributes;

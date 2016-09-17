@@ -155,8 +155,8 @@ namespace GW2NET.Common
             }
 
             // Handle the request
-            var httpWebRequest = CreateHttpWebRequest(uri);
-            var httpWebResponse = await GetHttpWebResponseAsync(httpWebRequest, cancellationToken).ConfigureAwait(false);
+            var httpWebRequest = this.CreateHttpWebRequest(uri);
+            var httpWebResponse = await this.GetHttpWebResponseAsync(httpWebRequest, cancellationToken).ConfigureAwait(false);
             using (httpWebResponse)
             {
                 try

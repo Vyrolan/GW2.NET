@@ -18,11 +18,9 @@ namespace GW2NET.Items
     /// <summary>Represents a backpack.</summary>
     public class Backpack : Item, IUpgrade, IUpgradable, ISkinnable
     {
-        private InfixUpgrade infixUpgrade = new InfixUpgrade();
-
         private static readonly InfusionSlot[] EmptyInfusionSlots = new InfusionSlot[0];
 
-        private ICollection<InfusionSlot> infusionSlots = EmptyInfusionSlots;
+        private InfixUpgrade infixUpgrade = new InfixUpgrade(); private ICollection<InfusionSlot> infusionSlots = EmptyInfusionSlots;
 
         /// <summary>Gets or sets the default skin. This is a navigation property. Use the value of <see cref="DefaultSkinId"/> to obtain a reference.</summary>
         public virtual Skin DefaultSkin { get; set; }
@@ -58,6 +56,7 @@ namespace GW2NET.Items
                 Debug.Assert(this.infusionSlots != null, "this.infusionSlots != null");
                 return this.infusionSlots;
             }
+
             set
             {
                 this.infusionSlots = value ?? EmptyInfusionSlots;

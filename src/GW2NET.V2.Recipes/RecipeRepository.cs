@@ -186,7 +186,7 @@ namespace GW2NET.V2.Recipes
             IRecipeRepository self = this;
             var request = new RecipeDetailsRequest
             {
-                Identifier = identifier.ToString(NumberFormatInfo.InvariantInfo), 
+                Identifier = identifier.ToString(NumberFormatInfo.InvariantInfo),
                 Culture = self.Culture
             };
             var response = this.serviceClient.Send<RecipeDTO>(request);
@@ -211,7 +211,7 @@ namespace GW2NET.V2.Recipes
             IRecipeRepository self = this;
             var request = new RecipeBulkRequest
             {
-                Identifiers = identifiers.Select(i => i.ToString(NumberFormatInfo.InvariantInfo)).ToList(), 
+                Identifiers = identifiers.Select(i => i.ToString(NumberFormatInfo.InvariantInfo)).ToList(),
                 Culture = self.Culture
             };
             var response = this.serviceClient.Send<ICollection<RecipeDTO>>(request);
@@ -250,7 +250,7 @@ namespace GW2NET.V2.Recipes
             IRecipeRepository self = this;
             var request = new RecipeBulkRequest
             {
-                Identifiers = identifiers.Select(i => i.ToString(NumberFormatInfo.InvariantInfo)).ToList(), 
+                Identifiers = identifiers.Select(i => i.ToString(NumberFormatInfo.InvariantInfo)).ToList(),
                 Culture = self.Culture
             };
             var response = await this.serviceClient.SendAsync<ICollection<RecipeDTO>>(request, cancellationToken).ConfigureAwait(false);
@@ -270,7 +270,7 @@ namespace GW2NET.V2.Recipes
             IRecipeRepository self = this;
             var request = new RecipeDetailsRequest
             {
-                Identifier = identifier.ToString(NumberFormatInfo.InvariantInfo), 
+                Identifier = identifier.ToString(NumberFormatInfo.InvariantInfo),
                 Culture = self.Culture
             };
             var response = await this.serviceClient.SendAsync<RecipeDTO>(request, cancellationToken).ConfigureAwait(false);
@@ -283,7 +283,7 @@ namespace GW2NET.V2.Recipes
             IRecipeRepository self = this;
             var request = new RecipePageRequest
             {
-                Page = pageIndex, 
+                Page = pageIndex,
                 Culture = self.Culture
             };
             var response = this.serviceClient.Send<ICollection<RecipeDTO>>(request);
@@ -296,8 +296,8 @@ namespace GW2NET.V2.Recipes
             IRecipeRepository self = this;
             var request = new RecipePageRequest
             {
-                Page = pageIndex, 
-                PageSize = pageSize, 
+                Page = pageIndex,
+                PageSize = pageSize,
                 Culture = self.Culture
             };
             var response = this.serviceClient.Send<ICollection<RecipeDTO>>(request);
@@ -317,7 +317,7 @@ namespace GW2NET.V2.Recipes
             IRecipeRepository self = this;
             var request = new RecipePageRequest
             {
-                Page = pageIndex, 
+                Page = pageIndex,
                 Culture = self.Culture
             };
             var response = await this.serviceClient.SendAsync<ICollection<RecipeDTO>>(request, cancellationToken).ConfigureAwait(false);
@@ -337,8 +337,8 @@ namespace GW2NET.V2.Recipes
             IRecipeRepository self = this;
             var request = new RecipePageRequest
             {
-                Page = pageIndex, 
-                PageSize = pageSize, 
+                Page = pageIndex,
+                PageSize = pageSize,
                 Culture = self.Culture
             };
             var response = await this.serviceClient.SendAsync<ICollection<RecipeDTO>>(request, cancellationToken).ConfigureAwait(false);

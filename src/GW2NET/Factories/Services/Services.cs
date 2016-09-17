@@ -1,11 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="FactoryForV2.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="Services.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Provides access to version 2 of the public API.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
 namespace GW2NET.Factories.V2
 {

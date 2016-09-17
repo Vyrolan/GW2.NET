@@ -133,7 +133,6 @@ namespace GW2NET.Common
             return Interleaved(FindAllPagesAsyncImpl(instance, pageSize, pageCount, cancellationToken));
         }
 
-
         private static IEnumerable<Task<ICollectionPage<T>>> FindAllPagesAsyncImpl<T>(
             IPaginator<T> instance,
             int pageCount,
@@ -199,26 +198,33 @@ namespace GW2NET.Common
         private static IEnumerable<Task<T>> Interleaved<T>(IEnumerable<Task<T>> tasks)
         {
             var inputTasks = tasks.ToList();
-            var sources = (from _ in Enumerable.Range(0, inputTasks.Count)
-                           select new TaskCompletionSource<T>()).ToList();
+            var sources = Enumerable.Range(0, inputTasks.Count).Select(_ => new TaskCompletionSource<T>()).ToList();
+
             int nextTaskIndex = -1;
             foreach (var inputTask in inputTasks)
             {
-                inputTask.ContinueWith(completed =>
-                {
-                    var source = sources[Interlocked.Increment(ref nextTaskIndex)];
-                    if (completed.IsFaulted)
-                        source.TrySetException(completed.Exception.InnerExceptions);
-                    else if (completed.IsCanceled)
-                        source.TrySetCanceled();
-                    else
-                        source.TrySetResult(completed.Result);
-                }, CancellationToken.None,
-                   TaskContinuationOptions.ExecuteSynchronously,
-                   TaskScheduler.Default);
+                inputTask.ContinueWith(
+                    completed =>
+                    {
+                        var source = sources[Interlocked.Increment(ref nextTaskIndex)];
+                        if (completed.IsFaulted)
+                        {
+                            source.TrySetException(completed.Exception.InnerExceptions);
+                        }
+                        else if (completed.IsCanceled)
+                        {
+                            source.TrySetCanceled();
+                        }
+                        else
+                        {
+                            source.TrySetResult(completed.Result);
+                        }
+                    }, CancellationToken.None,
+                       TaskContinuationOptions.ExecuteSynchronously,
+                       TaskScheduler.Default);
             }
-            return from source in sources
-                   select source.Task;
+
+            return sources.Select(source => source.Task);
         }
     }
 }

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="GatheringToolSkinConverterFactory.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+// </copyright>
 
 namespace GW2NET.Factories.V2
 {
@@ -11,6 +9,7 @@ namespace GW2NET.Factories.V2
     using GW2NET.V2.Skins.Converters;
     using GW2NET.V2.Skins.Json;
     using Skins;
+
     public class GatheringToolSkinConverterFactory : ITypeConverterFactory<SkinDTO, GatheringToolSkin>
     {
         public IConverter<SkinDTO, GatheringToolSkin> Create(string discriminator)
