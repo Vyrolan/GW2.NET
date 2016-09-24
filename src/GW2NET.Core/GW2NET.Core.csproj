@@ -2,7 +2,7 @@
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{05F3D999-0470-4123-8C80-AF4AC2385E7C}</ProjectGuid>
@@ -13,8 +13,9 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile151</TargetFrameworkProfile>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -73,8 +74,8 @@
     <Compile Include="Common\Converters\CollectionResponseConverter.cs" />
     <Compile Include="Common\Converters\DictionaryRangeResponseConverter.cs" />
     <Compile Include="Common\Converters\ResponseConverter.cs" />
+    <Compile Include="Common\ISlice{T}.cs" />
     <Compile Include="Common\KeyUtilities.cs" />
-    <Compile Include="Common\ServiceClientAuthorized.cs" />
     <Compile Include="Common\BulkRequest.cs" />
     <Compile Include="Common\CollectionPage.cs" />
     <Compile Include="Common\Converters\ConverterAdapter.cs" />
@@ -100,10 +101,8 @@
     <Compile Include="Common\IPageRequest.cs" />
     <Compile Include="Common\IPaginator.cs" />
     <Compile Include="Common\IRenderable.cs" />
-    <Compile Include="Common\IRepository.cs" />
     <Compile Include="Common\IRequest.cs" />
     <Compile Include="Common\IResponse{T}.cs" />
-    <Compile Include="Common\IServiceClient.cs" />
     <Compile Include="Common\ISubsetContext.cs" />
     <Compile Include="Common\ITimeSensitive.cs" />
     <Compile Include="Common\PageContextPatchUtility.cs" />
@@ -119,9 +118,15 @@
     <Compile Include="Common\Serializers\DataContractSerializer.cs" />
     <Compile Include="Common\Serializers\ISerializer.cs" />
     <Compile Include="Common\Serializers\ISerializerFactory.cs" />
-    <Compile Include="Common\ServiceClient.cs" />
     <Compile Include="Common\ServiceException.cs" />
+    <Compile Include="Common\Slice{T}.cs" />
     <Compile Include="Common\UrlEncodedForm.cs" />
+    <Compile Include="Connectivity\Connector.cs" />
+    <Compile Include="Connectivity\HttpConnector.cs" />
+    <Compile Include="Common\IRepository.cs" />
+    <Compile Include="Connectivity\ApiQuery.cs" />
+    <Compile Include="Common\RepositoryExtensions.cs" />
+    <Compile Include="Connectivity\Result.cs" />
     <Compile Include="DynamicEvents\CylinderLocation.cs" />
     <Compile Include="DynamicEvents\DynamicEvent.cs" />
     <Compile Include="DynamicEvents\DynamicEventFlags.cs" />
@@ -364,6 +369,9 @@
     <Compile Include="Rendering\IRenderService.cs" />
     <Compile Include="Rendering\RenderRequest.cs" />
     <Compile Include="Rendering\RenderService.cs" />
+    <Compile Include="Connectivity\ApiMetadata.cs" />
+    <Compile Include="Common\LinqExtensions.cs" />
+    <Compile Include="Common\StringExtensions.cs" />
     <Compile Include="Skins\ArmorSkin.cs" />
     <Compile Include="Skins\AxeSkin.cs" />
     <Compile Include="Skins\ForagingToolSkin.cs" />
@@ -436,15 +444,15 @@
   <ItemGroup>
     <None Include="GW2NET.Core.nuspec" />
     <AdditionalFiles Include="$(SolutionDir)stylecop.json" />
-    <None Include="packages.config" />
+    <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Local\DynamicEvents\Rotations.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+    <Reference Include="System.Runtime.Serialization.Primitives">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETPortable\v4.6\Profile\Profile151\System.Runtime.Serialization.Primitives.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
