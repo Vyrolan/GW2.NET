@@ -370,8 +370,6 @@
     <Compile Include="Rendering\RenderRequest.cs" />
     <Compile Include="Rendering\RenderService.cs" />
     <Compile Include="Connectivity\ApiMetadata.cs" />
-    <Compile Include="Common\LinqExtensions.cs" />
-    <Compile Include="Common\StringExtensions.cs" />
     <Compile Include="Skins\ArmorSkin.cs" />
     <Compile Include="Skins\AxeSkin.cs" />
     <Compile Include="Skins\ForagingToolSkin.cs" />
@@ -447,11 +445,11 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Local\DynamicEvents\Rotations.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="System.Runtime.Serialization.Primitives">
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETPortable\v4.6\Profile\Profile151\System.Runtime.Serialization.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Xml">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETPortable\v4.6\Profile\Profile151\System.Runtime.Serialization.Xml.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
