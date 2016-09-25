@@ -2,13 +2,13 @@
 // This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
 
-namespace GW2NET.Connectivity
+namespace GW2NET.Common
 {
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Common;
+    using Connectivity;
 
     /// <summary>Provides a set of extensions methods for api querying.</summary>
     public static class RepositoryExtensions
@@ -41,7 +41,8 @@ namespace GW2NET.Connectivity
             // Query the api asnychronously with each set of ids and await all
             Result<TDataContract>[] results = await Task.WhenAll(idListList.Select(idList => GetItemsFromApiAsync(idList, repository, cancellationToken)));
 
-            return results.Select(result => repository.Converter.Convert(result.Data, result.State));
+            // Flatten the collections and return the converted elements
+            return results.SelectMany(result => result.Data, (result, contract) => repository.Converter.Convert(contract, result.State));
         }
 
         /// <summary>Calls the Guild Wars 2 Api and gets the items with the specified ids.</summary>
