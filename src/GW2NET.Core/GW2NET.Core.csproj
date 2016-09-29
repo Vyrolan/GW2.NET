@@ -308,6 +308,8 @@
     <Compile Include="Maps\UnknownPointOfInterest.cs" />
     <Compile Include="Maps\Vista.cs" />
     <Compile Include="Maps\Waypoint.cs" />
+    <Compile Include="Provider\BlockVisitor.cs" />
+    <Compile Include="Provider\QueryBuilder.cs" />
     <Compile Include="Quaggans\IQuagganRepository.cs" />
     <Compile Include="Quaggans\Quaggan.cs" />
     <Compile Include="Recipes\AmuletRecipe.cs" />
@@ -445,6 +447,9 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System.Linq.Queryable">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETPortable\v4.6\Profile\Profile151\System.Linq.Queryable.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization.Primitives">
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETPortable\v4.6\Profile\Profile151\System.Runtime.Serialization.Primitives.dll</HintPath>
     </Reference>
