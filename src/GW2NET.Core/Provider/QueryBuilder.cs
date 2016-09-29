@@ -7,7 +7,6 @@ namespace GW2NET.Provider
     using System;
     using System.Collections.Generic;
     using System.Linq.Expressions;
-    using System.Reflection;
 
     public class QueryBuilder
     {
