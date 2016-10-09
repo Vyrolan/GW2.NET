@@ -10,17 +10,14 @@ namespace GW2NET.Provider
 
     public class QueryBuilder
     {
-        private readonly BlockVisitor blockVisitor;
-        private BlockExpression queryExpression;
+        private readonly QueryVisitor blockVisitor;
+        private QueryExpression query;
 
         public QueryBuilder()
         {
-            this.blockVisitor = new BlockVisitor();
+            this.blockVisitor = new QueryVisitor();
 
-            var locationEx = Expression.Block(Expression.Empty());
-            var paramEx = Expression.Block(Expression.Empty());
-
-            this.queryExpression = Expression.Block(locationEx, paramEx);
+            this.query = new QueryExpression(Expression.Empty());
         }
 
         public QueryBuilder AtLocation<TProperty>(Expression<Func<TProperty>> property)
@@ -36,8 +33,7 @@ namespace GW2NET.Provider
         public QueryBuilder AtLocation(string location)
         {
             var locCons = Expression.Constant(location, typeof(string));
-            var updLocEx = this.blockVisitor.Append(this.queryExpression.Expressions[0], locCons);
-            this.queryExpression = (BlockExpression)this.blockVisitor.Replace(this.queryExpression, 0, updLocEx);
+            this.query = (QueryExpression)this.blockVisitor.AddResouce(this.query, locCons);
 
             return this;
         }
@@ -64,15 +60,14 @@ namespace GW2NET.Provider
         public QueryBuilder WithParameter<TValue>(string key, TValue value)
         {
             var paramEx = Expression.Constant(new KeyValuePair<string, TValue>(key, value), typeof(KeyValuePair<string, TValue>));
-            var updParamEx = this.blockVisitor.Append(this.queryExpression.Expressions[1], paramEx);
-            this.queryExpression = (BlockExpression)this.blockVisitor.Replace(this.queryExpression, 1, updParamEx);
+            this.query = (QueryExpression)this.blockVisitor.AddResouce(this.query, paramEx);
 
             return this;
         }
 
         public Expression Build()
         {
-            return this.queryExpression;
+            return this.query;
         }
     }
 }

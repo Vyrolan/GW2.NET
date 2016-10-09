@@ -16,9 +16,13 @@ namespace GW2NET.Provider
             this.Resource = new ReadOnlyCollection<Expression>(new List<Expression>(1) { resource });
         }
 
-        public QueryExpression(IList<Expression> resource)
+        public QueryExpression(IList<Expression> resource, IList<Expression> parameters = null)
         {
             this.Resource = new ReadOnlyCollection<Expression>(resource);
+            if (parameters == null)
+            {
+                this.Parameters = new ReadOnlyCollection<Expression>(new List<Expression>(0));
+            }
         }
 
         public override bool CanReduce => false;
@@ -27,7 +31,7 @@ namespace GW2NET.Provider
 
         public ReadOnlyCollection<Expression> Resource { get; }
 
-        public Expression Parameters { get; }
+        public ReadOnlyCollection<Expression> Parameters { get; }
 
         public override Type Type => this.GetType();
     }
