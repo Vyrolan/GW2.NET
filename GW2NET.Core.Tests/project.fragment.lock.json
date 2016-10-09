@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "exports": {
+    "GW2NET.Core/1.0.0": {
+      "type": "project",
+      "framework": ".NETStandard,Version=v1.3",
+      "compile": {
+        "bin/Debug/GW2NET.Core.dll": {}
+      },
+      "runtime": {
+        "C:/Program Files (x86)/Reference Assemblies/Microsoft/Framework/.NETPortable/v4.6/Profile/Profile151/System.Linq.Queryable.dll": {},
+        "C:/Program Files (x86)/Reference Assemblies/Microsoft/Framework/.NETPortable/v4.6/Profile/Profile151/System.Runtime.Serialization.Primitives.dll": {},
+        "C:/Program Files (x86)/Reference Assemblies/Microsoft/Framework/.NETPortable/v4.6/Profile/Profile151/System.Runtime.Serialization.Xml.dll": {},
+        "bin/Debug/GW2NET.Core.dll": {}
+      },
+      "contentFiles": {
+        "bin/Debug/GW2NET.Core.pdb": {
+          "buildAction": "None",
+          "codeLanguage": "any",
+          "copyToOutput": true
+        }
+      }
+    }
+  }
+}
