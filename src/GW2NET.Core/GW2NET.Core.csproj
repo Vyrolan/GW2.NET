@@ -123,9 +123,7 @@
     <Compile Include="Common\UrlEncodedForm.cs" />
     <Compile Include="Connectivity\Connector.cs" />
     <Compile Include="Connectivity\HttpConnector.cs" />
-    <Compile Include="Common\IRepository.cs" />
-    <Compile Include="Connectivity\ApiQuery.cs" />
-    <Compile Include="Common\RepositoryExtensions.cs" />
+    <Compile Include="Common\Repository.cs" />
     <Compile Include="Connectivity\Result.cs" />
     <Compile Include="DynamicEvents\CylinderLocation.cs" />
     <Compile Include="DynamicEvents\DynamicEvent.cs" />
@@ -308,8 +306,9 @@
     <Compile Include="Maps\UnknownPointOfInterest.cs" />
     <Compile Include="Maps\Vista.cs" />
     <Compile Include="Maps\Waypoint.cs" />
-    <Compile Include="Provider\BlockVisitor.cs" />
+    <Compile Include="Provider\QueryVisitor.cs" />
     <Compile Include="Provider\QueryBuilder.cs" />
+    <Compile Include="Provider\QueryExpression.cs" />
     <Compile Include="Quaggans\IQuagganRepository.cs" />
     <Compile Include="Quaggans\Quaggan.cs" />
     <Compile Include="Recipes\AmuletRecipe.cs" />

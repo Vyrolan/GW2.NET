@@ -4,8 +4,11 @@
 
 namespace GW2NET.Common
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using Connectivity;
@@ -13,7 +16,7 @@ namespace GW2NET.Common
     /// <summary>Provides a set of extensions methods for api querying.</summary>
     public static class RepositoryExtensions
     {
-        /// <summary>Gets a set of items with the specified ids from the Guild Wars 2 api.</summary>
+       /// <summary>Gets a set of items with the specified ids from the Guild Wars 2 api.</summary>
         /// <typeparam name="TKey">The type of key used to identify items.</typeparam>
         /// <typeparam name="TDataContract">The type of data returned by the api.</typeparam>
         /// <typeparam name="TValue">The type of data to convert the api data into.</typeparam>
@@ -57,7 +60,7 @@ namespace GW2NET.Common
         {
             ApiQuery query = new ApiQuery
             {
-                ResourceLocation = repository.Location
+                ResourceLocation = repository.Query
             };
 
             // ReSharper disable once SuspiciousTypeConversion.Global
@@ -70,7 +73,7 @@ namespace GW2NET.Common
 
             query.Identifiers = idList.Select(i => i.ToString());
 
-            return repository.Connector.QueryAsync<TDataContract>(query, cancellationToken);
+            return repository.Connector.QueryAsync<TDataContract>(repository.q, cancellationToken);
         }
 
         /// <summary>Creates a set of sets for api querying.</summary>
