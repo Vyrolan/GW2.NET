@@ -5,6 +5,7 @@
 namespace GW2NET.Connectivity
 {
     using System;
+    using System.Linq.Expressions;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -18,7 +19,7 @@ namespace GW2NET.Connectivity
         /// <para>Under no circumstances should this method be overwritten and throw either a <see cref="System.NotSupportedException"/> or a <see cref="NotImplementedException"/>.
         /// If this is the case the standard query logic will produce runtime errors.</para></remarks>
         /// <returns>A <see cref="Task{TResult}"/> whose value indicates whether the connection was successfully established.</returns>
-        public virtual Task<bool> Connect()
+        public virtual Task<bool> ConnectAsync()
         {
             return Task.FromResult(true);
         }
@@ -27,7 +28,7 @@ namespace GW2NET.Connectivity
         /// <param name="query">Additional query informations.</param>
         /// <typeparam name="TData">The return data's type.</typeparam>
         /// <returns>An <see cref="Result{TData}"/> object containing the data and an optional state.</returns>
-        public Task<Result<TData>> QueryAsync<TData>(ApiQuery query)
+        public Task<Result<TData>> QueryAsync<TData>(Expression query)
         {
             return this.QueryAsync<TData>(query, CancellationToken.None);
         }
@@ -37,7 +38,7 @@ namespace GW2NET.Connectivity
         /// <param name="cancellationToken">A token signalling the cancellation of the current task.</param>
         /// <typeparam name="TData">The return data's type.</typeparam>
         /// <returns>An <see cref="Result{TData}"/> object containing the data and an optional state.</returns>
-        public abstract Task<Result<TData>> QueryAsync<TData>(ApiQuery query, CancellationToken cancellationToken);
+        public abstract Task<Result<TData>> QueryAsync<TData>(Expression query, CancellationToken cancellationToken);
 
         /// <summary>Disconnects from the data source.</summary>
         /// <remarks><para>This is an optional method to implement. If the connection doesn't support persistance do not implement this method.
@@ -46,7 +47,7 @@ namespace GW2NET.Connectivity
         /// <para>Under no circumstances should this method be overwritten and throw either a <see cref="System.NotSupportedException"/> or a <see cref="NotImplementedException"/>.
         /// If this is the case the standard query logic will produce runtime errors.</para></remarks>
         /// <returns>A <see cref="Task"/> which indicated that the disconnect was successful.</returns>
-        public virtual Task Disconnect()
+        public virtual Task DisconnectAsync()
         {
             return Task.CompletedTask;
         }

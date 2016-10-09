@@ -6,15 +6,19 @@ namespace GW2NET.Connectivity
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Net.Http;
     using System.Net.Http.Headers;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using Common;
     using Common.Serializers;
+    using Provider;
 
     /// <summary>Used to make requests against a REST api.</summary>
     public sealed class HttpConnector : Connector
@@ -41,7 +45,7 @@ namespace GW2NET.Connectivity
         }
 
         /// <inheritdoc/>
-        public override async Task<Result<TData>> QueryAsync<TData>(ApiQuery query, CancellationToken cancellationToken)
+        public override async Task<Result<TData>> QueryAsync<TData>(Expression query, CancellationToken cancellationToken)
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, new Uri(this.BuildQueryString(query), UriKind.Relative));
 
@@ -61,21 +65,28 @@ namespace GW2NET.Connectivity
             return new Result<TData>(slice, metadata);
         }
 
-        // HACK: Move to own dedicated, less error prone class
-        private string BuildQueryString(ApiQuery query)
+        private string BuildQueryString(Expression query)
         {
-            var queryString = $"{query.ResourceLocation}";
-            if (query.Identifiers.Any())
+            var queryEx = query as QueryExpression;
+            if (queryEx == null)
             {
-                queryString = queryString + $"?ids={string.Join(",", query.Identifiers)}";
+                throw new ArgumentNullException(nameof(query), "The query had the wrong format.");
             }
 
-            if (query.Language != null)
+            StringBuilder builder = new StringBuilder();
+
+            var ressEnum = queryEx.Resource.OfType<ConstantExpression>().Select(e => e.Value);
+            builder.Append(string.Join("/", ressEnum));
+
+            if (queryEx.Parameters.Any())
             {
-                queryString = queryString + $"?lang={query.Language.TwoLetterISOLanguageName}";
+                var queryEnumerable = queryEx.Parameters.OfType<ConstantExpression>().Select(e => (KeyValuePair<string, object>)e.Value).Select(p => $"{p.Key}={p.Value}");
+
+                builder.Append("?");
+                builder.Append(string.Join("&", queryEnumerable));
             }
 
-            return queryString;
+            return builder.ToString();
         }
 
         private async Task<TContent> GetContentAsync<TContent>(HttpResponseMessage message)
