@@ -4,6 +4,7 @@
 
 namespace GW2NET.Common
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
 
@@ -18,12 +19,20 @@ namespace GW2NET.Common
 
         /// <summary>Initializes a new instance of the <see cref="Slice{T}"/> class.</summary>
         /// <param name="items">The list that is wrapped by the new collection.</param>
-        public Slice(IList<T> items)
-            : base(items)
+        public Slice(IEnumerable<T> items)
         {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
+            foreach (var i in items)
+            {
+                this.Add(i);
+            }
         }
 
-        /// <inhieritdoc />
+        /// <inheritdoc />
         public int TotalCount { get; set; }
     }
 }
