@@ -14,6 +14,15 @@ namespace GW2NET.Common
     /// <typeparam name="TValue">The type the data is retrieved with.</typeparam>
     public abstract class Repository<TDataContract, TValue>
     {
+        /// <summary>Initializes a new instance of the <see cref="Repository{TDataContract,TValue}"/> class.</summary>
+        /// <param name="connector">The <see cref="GW2NET.Connectivity.Connector"/> making requests against the data source.</param>
+        /// <param name="converter">The <see cref="IConverter{TSource,TTarget}"/> used to convert the data source data to usable data.</param>
+        protected Repository(Connector connector, IConverter<ISlice<TDataContract>, ISlice<TValue>> converter)
+        {
+            this.Connector = connector;
+            this.Converter = converter;
+        }
+
         /// <summary>Gets the <see cref="Connectivity.Connector"/> used to make queries against the data source.</summary>
         public Connector Connector { get; }
 
