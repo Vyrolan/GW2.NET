@@ -6,7 +6,6 @@ namespace GW2NET.Connectivity
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Globalization;
     using System.IO;
     using System.Linq;
@@ -19,6 +18,8 @@ namespace GW2NET.Connectivity
     using Common;
     using Common.Serializers;
     using Provider;
+    using GW2NET.Extensions;
+
 
     /// <summary>Used to make requests against a REST api.</summary>
     public sealed class HttpConnector : Connector
@@ -51,18 +52,76 @@ namespace GW2NET.Connectivity
 
             var responseMessage = await this.httpClient.SendAsync(requestMessage, cancellationToken);
 
-            ApiMetadata metadata = this.GetMetadata(responseMessage);
-
-            var slice = new Slice<TData> { TotalCount = metadata.ResultTotal };
-
-            IEnumerable<TData> data = await this.GetContentAsync<IEnumerable<TData>>(responseMessage);
-
-            foreach (TData item in data)
+            using (var content = responseMessage.Content)
             {
-                slice.Add(item);
+                if (!responseMessage.IsSuccessStatusCode)
+                {
+                    var contentType = content.Headers.ContentType;
+
+                    if (contentType != null
+                        && contentType.MediaType.Equals("application/json", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Get the response content
+                        var errorResult = await this.DeserializeAsync<ErrorResult>(content, this.errorSerializerFactory, this.gzipInflator);
+
+                        // Get the error description, or null if none was returned
+                        throw new ServiceException(errorResult?.Text);
+                    }
+                }
+
+                // Get the metadata
+                var metadata = this.DeserializeMetadata(responseMessage);
+
+                // Deserialize the content
+                var deserializedContent = await this.DeserializeAsync<IEnumerable<TData>>(content, this.serializerFactory, this.gzipInflator);
+                var contentSlice = new Slice<TData>(deserializedContent)
+                {
+                    TotalCount = metadata.ResultTotal
+                };
+
+                return new Result<TData>(contentSlice, metadata);
+            }
+        }
+
+        private ApiMetadata DeserializeMetadata(HttpResponseMessage responseMessage)
+        {
+            var headers = responseMessage.Headers;
+            var content = responseMessage.Content;
+
+            return new ApiMetadata
+            {
+                ContentLanguage = this.GetLanguage(content),
+                ExpireDate = content.Headers.Expires ?? default(DateTimeOffset),
+                RequestDate = headers.Date ?? default(DateTimeOffset),
+                ResultCount = this.ReadOptionalHeader(headers, "X-Result-Count"),
+                ResultTotal = this.ReadOptionalHeader(headers, "X-Result-Total")
+            };
+        }
+
+        private async Task<TResult> DeserializeAsync<TResult>(HttpContent content, ISerializerFactory serializer, IConverter<Stream, Stream> compressionConverter)
+        {
+            Stream contentStream = new MemoryStream();
+
+            await content.CopyToAsync(contentStream);
+
+            var contentEncoding = content.Headers.ContentEncoding;
+            if (contentEncoding != null && contentEncoding.Count > 0)
+            {
+                if (contentEncoding.FirstOrDefault().Equals("gzip", StringComparison.OrdinalIgnoreCase))
+                {
+                    var uncompressed = compressionConverter.Convert(contentStream, null);
+                    if (uncompressed == null)
+                    {
+                        throw new InvalidOperationException("Could not read stream.");
+                    }
+
+                    contentStream = uncompressed;
+                }
             }
 
-            return new Result<TData>(slice, metadata);
+            await contentStream.FlushAsync();
+            contentStream.Position = 0;
+            return serializer.GetSerializer<TResult>().Deserialize(contentStream);
         }
 
         private string BuildQueryString(Expression query)
@@ -73,7 +132,7 @@ namespace GW2NET.Connectivity
                 throw new ArgumentNullException(nameof(query), "The query had the wrong format.");
             }
 
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
 
             var ressEnum = queryEx.Resource.OfType<ConstantExpression>().Select(e => e.Value);
             builder.Append(string.Join("/", ressEnum));
@@ -89,78 +148,25 @@ namespace GW2NET.Connectivity
             return builder.ToString();
         }
 
-        private async Task<TContent> GetContentAsync<TContent>(HttpResponseMessage message)
+        private int ReadOptionalHeader(HttpResponseHeaders headers, string headerName)
         {
-            if (message == null)
-            {
-                throw new ArgumentNullException(nameof(message));
-            }
-
-            using (HttpContent content = message.Content)
-            {
-                if (!message.IsSuccessStatusCode)
-                {
-                    MediaTypeHeaderValue contentType = content.Headers.ContentType;
-
-                    if (contentType != null
-                        && contentType.MediaType.Equals("application/json", StringComparison.OrdinalIgnoreCase))
-                    {
-                        // Get the response content
-                        ErrorResult errorResult = await this.DeserializeAsync<ErrorResult>(content, this.errorSerializerFactory, this.gzipInflator);
-
-                        // Get the error description, or null if none was returned
-                        throw new ServiceException(errorResult?.Text);
-                    }
-                }
-
-                return await this.DeserializeAsync<TContent>(content, this.serializerFactory, this.gzipInflator);
-            }
+            return headers.SingleOrDefault(h => string.Equals(h.Key, headerName, StringComparison.OrdinalIgnoreCase)).Value.Select(i => this.ParseToDefault(i, -1)).FirstOrDefault();
         }
 
-        private async Task<TResult> DeserializeAsync<TResult>(HttpContent content, ISerializerFactory serializer, IConverter<Stream, Stream> compressionConverter)
+        private int ParseToDefault(string input, int defaultValue)
         {
-            Stream contentStream = new MemoryStream();
-
-            await content.CopyToAsync(contentStream);
-
-            ICollection<string> contentEncoding = content.Headers.ContentEncoding;
-            if (contentEncoding != null && contentEncoding.Count > 0)
+            int value;
+            if (!int.TryParse(input, out value))
             {
-                if (contentEncoding.FirstOrDefault().Equals("gzip", StringComparison.OrdinalIgnoreCase))
-                {
-                    Stream uncompressed = compressionConverter.Convert(contentStream, null);
-                    if (uncompressed == null)
-                    {
-                        throw new InvalidOperationException("Could not read stream.");
-                    }
-
-                    contentStream = uncompressed;
-                }
+                value = defaultValue;
             }
 
-            await contentStream.FlushAsync();
-            contentStream.Position = 0;
-            return serializer.GetSerializer<TResult>().Deserialize(contentStream);
+            return value;
         }
 
-        private ApiMetadata GetMetadata(HttpResponseMessage message)
+        private CultureInfo GetLanguage(HttpContent content)
         {
-            ApiMetadata metadata = new ApiMetadata();
-
-            using (HttpContent content = message.Content)
-            {
-                metadata.ContentLanguage = content.Headers.ContentLanguage.Count == 0 ? new CultureInfo("iv") : new CultureInfo(content.Headers.ContentLanguage.First());
-                metadata.RequestDate = message.Headers.Date ?? default(DateTimeOffset);
-                metadata.ExpireDate = content.Headers.Expires ?? default(DateTimeOffset);
-
-                string resultTotal = message.Headers.SingleOrDefault(h => string.Equals(h.Key, "X-Result-Total", StringComparison.OrdinalIgnoreCase)).Value?.FirstOrDefault();
-                metadata.ResultTotal = !string.IsNullOrEmpty(resultTotal) ? Convert.ToInt32(resultTotal) : -1;
-
-                string resultCount = message.Headers.SingleOrDefault(h => string.Equals(h.Key, "X-Result-Count", StringComparison.OrdinalIgnoreCase)).Value?.FirstOrDefault();
-                metadata.ResultCount = !string.IsNullOrEmpty(resultCount) ? Convert.ToInt32(resultCount) : -1;
-            }
-
-            return metadata;
+            return content.Headers.ContentLanguage.Count == 0 ? new CultureInfo("iv") : new CultureInfo(content.Headers.ContentLanguage.First());
         }
     }
 }
