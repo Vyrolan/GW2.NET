@@ -18,8 +18,6 @@ namespace GW2NET.Connectivity
     using Common;
     using Common.Serializers;
     using Provider;
-    using GW2NET.Extensions;
-
 
     /// <summary>Used to make requests against a REST api.</summary>
     public sealed class HttpConnector : Connector
@@ -58,11 +56,13 @@ namespace GW2NET.Connectivity
                 {
                     var contentType = content.Headers.ContentType;
 
-                    if (contentType != null
-                        && contentType.MediaType.Equals("application/json", StringComparison.OrdinalIgnoreCase))
+                    if (contentType != null && contentType.MediaType.Equals("application/json", StringComparison.OrdinalIgnoreCase))
                     {
+                        // Retrieve the error serializer
+                        var errorSerializer = this.errorSerializerFactory.GetSerializer<ErrorResult>();
+
                         // Get the response content
-                        var errorResult = await this.DeserializeAsync<ErrorResult>(content, this.errorSerializerFactory, this.gzipInflator);
+                        var errorResult = await this.DeserializeAsync(content, errorSerializer, this.gzipInflator);
 
                         // Get the error description, or null if none was returned
                         throw new ServiceException(errorResult?.Text);
@@ -72,33 +72,17 @@ namespace GW2NET.Connectivity
                 // Get the metadata
                 var metadata = this.DeserializeMetadata(responseMessage);
 
-                // Deserialize the content
-                var deserializedContent = await this.DeserializeAsync<IEnumerable<TData>>(content, this.serializerFactory, this.gzipInflator);
-                var contentSlice = new Slice<TData>(deserializedContent)
-                {
-                    TotalCount = metadata.ResultTotal
-                };
+                // Retrieve the serializer
+                var serializer = this.serializerFactory.GetSerializer<TData>();
 
-                return new Result<TData>(contentSlice, metadata);
+                // Deserialize the content
+                var deserializedContent = await this.DeserializeAsync(content, serializer, this.gzipInflator);
+
+                return new Result<TData>(deserializedContent, metadata);
             }
         }
 
-        private ApiMetadata DeserializeMetadata(HttpResponseMessage responseMessage)
-        {
-            var headers = responseMessage.Headers;
-            var content = responseMessage.Content;
-
-            return new ApiMetadata
-            {
-                ContentLanguage = this.GetLanguage(content),
-                ExpireDate = content.Headers.Expires ?? default(DateTimeOffset),
-                RequestDate = headers.Date ?? default(DateTimeOffset),
-                ResultCount = this.ReadOptionalHeader(headers, "X-Result-Count"),
-                ResultTotal = this.ReadOptionalHeader(headers, "X-Result-Total")
-            };
-        }
-
-        private async Task<TResult> DeserializeAsync<TResult>(HttpContent content, ISerializerFactory serializer, IConverter<Stream, Stream> compressionConverter)
+        private async Task<TResult> DeserializeAsync<TResult>(HttpContent content, ISerializer<TResult> serializer, IConverter<Stream, Stream> compressionConverter)
         {
             Stream contentStream = new MemoryStream();
 
@@ -121,7 +105,23 @@ namespace GW2NET.Connectivity
 
             await contentStream.FlushAsync();
             contentStream.Position = 0;
-            return serializer.GetSerializer<TResult>().Deserialize(contentStream);
+            return serializer.Deserialize(contentStream);
+        }
+
+        private ApiMetadata DeserializeMetadata(HttpResponseMessage responseMessage)
+        {
+            var headers = responseMessage.Headers;
+            var content = responseMessage.Content;
+
+            var metadata = new ApiMetadata
+            {
+                ContentLanguage = this.GetLanguage(content),
+                ExpireDate = content.Headers.Expires ?? default(DateTimeOffset),
+                RequestDate = headers.Date ?? default(DateTimeOffset),
+                ResultCount = this.ReadOptionalHeader(headers, "X-Result-Count"),
+                ResultTotal = this.ReadOptionalHeader(headers, "X-Result-Total")
+            };
+            return metadata;
         }
 
         private string BuildQueryString(Expression query)
@@ -150,18 +150,15 @@ namespace GW2NET.Connectivity
 
         private int ReadOptionalHeader(HttpResponseHeaders headers, string headerName)
         {
-            return headers.SingleOrDefault(h => string.Equals(h.Key, headerName, StringComparison.OrdinalIgnoreCase)).Value.Select(i => this.ParseToDefault(i, -1)).FirstOrDefault();
+            var headerValue = headers.SingleOrDefault(s => s.Key.Equals(headerName, StringComparison.OrdinalIgnoreCase)).Value?.FirstOrDefault();
+
+            return this.ParseToDefault(headerValue, -1);
         }
 
         private int ParseToDefault(string input, int defaultValue)
         {
             int value;
-            if (!int.TryParse(input, out value))
-            {
-                value = defaultValue;
-            }
-
-            return value;
+            return !int.TryParse(input, out value) ? defaultValue : value;
         }
 
         private CultureInfo GetLanguage(HttpContent content)
