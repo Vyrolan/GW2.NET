@@ -1,6 +1,23 @@
 {
   "version": 2,
   "exports": {
+    "GW2NET.Compression/1.0.0": {
+      "type": "project",
+      "framework": ".NETStandard,Version=v1.3",
+      "compile": {
+        "bin/Debug/GW2NET.Compression.dll": {}
+      },
+      "runtime": {
+        "bin/Debug/GW2NET.Compression.dll": {}
+      },
+      "contentFiles": {
+        "bin/Debug/GW2NET.Compression.pdb": {
+          "buildAction": "None",
+          "codeLanguage": "any",
+          "copyToOutput": true
+        }
+      }
+    },
     "GW2NET.Core/1.0.0": {
       "type": "project",
       "framework": ".NETStandard,Version=v1.3",
@@ -15,6 +32,23 @@
       },
       "contentFiles": {
         "bin/Debug/GW2NET.Core.pdb": {
+          "buildAction": "None",
+          "codeLanguage": "any",
+          "copyToOutput": true
+        }
+      }
+    },
+    "GW2NET.Newtonsoft/1.0.0": {
+      "type": "project",
+      "framework": ".NETStandard,Version=v1.3",
+      "compile": {
+        "bin/Debug/GW2NET.Newtonsoft.dll": {}
+      },
+      "runtime": {
+        "bin/Debug/GW2NET.Newtonsoft.dll": {}
+      },
+      "contentFiles": {
+        "bin/Debug/GW2NET.Newtonsoft.pdb": {
           "buildAction": "None",
           "codeLanguage": "any",
           "copyToOutput": true

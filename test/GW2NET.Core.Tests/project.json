@@ -3,12 +3,22 @@
   "testRunner": "xunit",
   "dependencies": {
     "xunit": "2.2.0-beta2-build3300",
+    "Moq": "4.6.38-alpha",
     "dotnet-test-xunit": "2.2.0-preview2-build1029"
   },
   "frameworks": {
     "netcoreapp1.0": {
+      "imports": [
+        "dnxcore50"
+      ],
       "dependencies": {
+        "GW2NET.Compression": {
+          "target": "project"
+        },
         "GW2NET.Core": {
+          "target": "project"
+        },
+        "GW2NET.Newtonsoft": {
           "target": "project"
         },
         "Microsoft.NETCore.App": {
