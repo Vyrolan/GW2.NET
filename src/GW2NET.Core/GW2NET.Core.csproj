@@ -117,10 +117,8 @@
     <Compile Include="Common\Slice{T}.cs" />
     <Compile Include="Common\UrlEncodedForm.cs" />
     <Compile Include="Connectivity\Connector.cs" />
-    <Compile Include="Connectivity\HttpConnector.cs" />
     <Compile Include="Common\Repository.cs" />
     <Compile Include="Connectivity\Result.cs" />
-    <Compile Include="Connectivity\UnauthorizedHandler.cs" />
     <Compile Include="DynamicEvents\CylinderLocation.cs" />
     <Compile Include="DynamicEvents\DynamicEvent.cs" />
     <Compile Include="DynamicEvents\DynamicEventFlags.cs" />
