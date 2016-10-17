@@ -44,7 +44,8 @@ namespace GW2NET.Common
         /// <returns>A collection of defined by this repository.</returns>
         public async Task<ISlice<TValue>> QueryAsync(CancellationToken cancellationToken)
         {
-            Result<TDataContract> queryResult = await this.Connector.QueryAsync<TDataContract>(this.QueryExpression, cancellationToken);
+            // ToDo: Fix this properly
+            Result<ISlice<TDataContract>> queryResult = await this.Connector.QueryAsync<ISlice<TDataContract>>(this.QueryExpression, cancellationToken);
 
             return this.Converter.Convert(queryResult.Data, queryResult.State);
         }
